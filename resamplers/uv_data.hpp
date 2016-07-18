@@ -17,9 +17,9 @@ namespace imaging_core{
 	size_t rows = extract<size_t>(uvw.attr("shape")[0]);
 	size_t l = len(uvw.attr("shape"));
 	
-	double u = extract<double>(uvw[make_tuple(0,0)]);
-	double v = extract<double>(uvw[make_tuple(0,1)]);
-	double w = extract<double>(uvw[make_tuple(0,2)]);
+	double u = extract<double>(uvw[boost::python::make_tuple(0,0)]);
+	double v = extract<double>(uvw[boost::python::make_tuple(0,1)]);
+	double w = extract<double>(uvw[boost::python::make_tuple(0,2)]);
 	bool cont = uvw.attr("dtype");
 	cout << cont << endl;
 	cout << l << endl;
