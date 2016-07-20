@@ -4,45 +4,22 @@
 #include <boost/python.hpp>
 #include <boost/python/numeric.hpp>
 #include <boost/python/extract.hpp>
-
 #include "uv_data.hpp"
+#include "bda_traits_policies/correlation_gridding_policy.hpp"
 
 namespace imaging_core{
  
   namespace resamplers{
     using namespace boost::python;
-    using namespace std;    
-    class a_policy { public: static void print(){cout << "a is active" << endl;} };
-    class b_policy { public: static void print(){cout << "b is active" << endl;} };
+    using namespace std;        
     
-    template <typename policy>
-    class bda_resampler {
+    template <typename active_correlation_gridding_policy>
+    class bda_resampler {  
     private:
-      size_t m_resources_aquired;
-      size_t m_uv_grid_u_size;
-      size_t m_uv_grid_v_size;
-      size_t m_uv_grid_channels;
-      size_t m_uv_grid_polarizations;
-      size_t m_max_non_regular_uv_samples;
-      size_t m_max_channels_per_uv_sample;
-      size_t m_num_uv_sample_correlations;
+      bool m_resources_aquired;
     public:
-      bda_resampler(size_t uv_grid_u_size, 
-		    size_t uv_grid_v_size,
-		    size_t uv_grid_channels,
-		    size_t uv_grid_polarizations,
-		    size_t max_non_regular_uv_samples,
-		    size_t max_channels_per_uv_sample,
-		    size_t num_uv_sample_correlations):
-			m_uv_grid_u_size(uv_grid_u_size),
-			m_uv_grid_v_size(uv_grid_v_size),
-			m_uv_grid_channels(uv_grid_channels),
-			m_uv_grid_polarizations(uv_grid_polarizations),
-			m_max_non_regular_uv_samples(max_non_regular_uv_samples),
-			m_max_channels_per_uv_sample(max_channels_per_uv_sample),
-			m_num_uv_sample_correlations(num_uv_sample_correlations){
+      bda_resampler():m_resources_aquired(false){
 	checked_acquire_persistant(); //Ensure RAII is followed in pure C++ calls
-	policy::print();
       }
       bda_resampler(bda_resampler && rvalue):
 			m_resources_aquired(rvalue.m_resources_aquired){
@@ -54,12 +31,11 @@ namespace imaging_core{
       bda_resampler(bda_resampler & lvalue) = delete; //ill-defined for persistant resources
       
       
-      bda_resampler & checked_acquire_persistant(){ //For use in Python context management try catch finally release mechanism
+      bda_resampler & checked_acquire_persistant(){ //For use in Python context management try catch finally release mechanism (or with mechanism)
 	if (!m_resources_aquired){
-	   
+	  //Acquire resources here
 	}
 	m_resources_aquired = true;
-	
 	return *this;
       }
       
@@ -67,15 +43,19 @@ namespace imaging_core{
 				      boost::python::object exception_value = boost::python::object(),
 				      boost::python::object traceback = boost::python::object()){ //For use in Python context management try catch finally release mechanism
 	if (m_resources_aquired){
-	  
+	  //Release resources here
 	}
 	m_resources_aquired = false;
       }
-      
-      void nonregular2regular(uv_data & input_uv){
-	cout << input_uv.m_uvw[0] << input_uv.m_uvw[1] << input_uv.m_uvw[2] << endl;
+      void nonregular2regular(uv_data & input_uv,
+			      bool append = true,
+			      bool copy_back = true){
+	cout << "Grid stub" << endl;
       }
-      void regular2nonregular(uv_data & output_uv){
+      void regular2nonregular(uv_data & output_uv,
+			      bool append = true,
+			      bool copy_back = true){
+	cout << "DeGrid stub" << endl;
       }
     };
   }
