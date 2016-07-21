@@ -22,5 +22,7 @@ BOOST_PYTHON_MODULE(uv_data)
 						(boost::python::arg("except_type")=boost::python::api::object(),
 						  boost::python::arg("exception_value")=boost::python::api::object(),
 						  boost::python::arg("traceback")=boost::python::api::object()))
+					    .def("sync_host2device",&imaging_core::resamplers::uv_data::sync_host2device)
+					    .def("sync_device2host",&imaging_core::resamplers::uv_data::sync_device2host)
 					    ;
 }

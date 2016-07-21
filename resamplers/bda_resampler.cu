@@ -1,9 +1,7 @@
 #include "bda_resampler.hpp"
 BOOST_PYTHON_MODULE(bda_resampler)
 {
-  boost::python::numeric::array::set_module_and_type("numpy", "ndarray");
-  boost::python::class_<imaging_core::resamplers::grid_single_correlation>("grid_single_correlation",boost::python::no_init);
-  
+  boost::python::numeric::array::set_module_and_type("numpy", "ndarray");  
   #define bda_resampler_wrapper(policy) \
   boost::python::class_<imaging_core::resamplers::bda_resampler<policy>, \
 			boost::noncopyable>("bda_resampler_"#policy) \
@@ -18,7 +16,7 @@ BOOST_PYTHON_MODULE(bda_resampler)
 						  boost::python::arg("traceback")=boost::python::api::object())) \
 					    .def("nonregular2regular", \
 						 &imaging_core::resamplers::bda_resampler<policy>::nonregular2regular, \
-						 (boost::python::arg("append")=true,boost::python::arg("copy_back")=true)) \
+						 (boost::python::arg("append")=true)) \
 					    .def("regular2nonregular", &imaging_core::resamplers::bda_resampler<policy>::regular2nonregular) \
 					    ; 
  {

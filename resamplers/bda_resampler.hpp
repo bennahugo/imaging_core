@@ -48,13 +48,11 @@ namespace imaging_core{
 	m_resources_aquired = false;
       }
       void nonregular2regular(uv_data & input_uv,
-			      bool append = true,
-			      bool copy_back = true){
+			      bool append = true){
 	cout << "Grid stub" << endl;
       }
       void regular2nonregular(uv_data & output_uv,
-			      bool append = true,
-			      bool copy_back = true){
+			      bool append = true){
 	cout << "DeGrid stub" << endl;
       }
     };
