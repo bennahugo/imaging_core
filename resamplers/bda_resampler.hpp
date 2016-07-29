@@ -4,7 +4,7 @@
 #include <boost/python.hpp>
 #include <boost/python/numeric.hpp>
 #include <boost/python/extract.hpp>
-#include "uv_data.hpp"
+#include <irregular_uv_data.hpp>
 #include "bda_traits_policies/correlation_gridding_policy.hpp"
 
 namespace imaging_core{
@@ -47,11 +47,11 @@ namespace imaging_core{
 	}
 	m_resources_aquired = false;
       }
-      void nonregular2regular(uv_data & input_uv,
+      void nonregular2regular(const data::irregular_uv_data & input_uv,
 			      bool append = true){
 	cout << "Grid stub" << endl;
       }
-      void regular2nonregular(uv_data & output_uv,
+      void regular2nonregular(data::irregular_uv_data & output_uv,
 			      bool append = true){
 	cout << "DeGrid stub" << endl;
       }

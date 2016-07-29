@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import unittest
 from imaging_core.cbuild.resamplers.bda_resampler import bda_resampler_grid_single_correlation
-from imaging_core.cbuild.resamplers.uv_data import uv_data
+from imaging_core.cbuild.data.irregular_uv_data import irregular_uv_data
 import numpy as np
 
 class class_test_uv_data_wrapper(unittest.TestCase):
@@ -101,14 +101,14 @@ class class_test_uv_data_wrapper(unittest.TestCase):
       #construct uv_data thereby transferring the samples host to device:
       self.gen_samples_host()
       self.deep_copy_host()
-      with uv_data(self.uvw,
-		   self.vis,
-		   self.flags,
-		   self.imgweights,
-		   self.ant1ids,
-		   self.ant2ids,
-		   self.time,
-		   self.ref_freqs) as samples:
+      with irregular_uv_data(self.uvw,
+			     self.vis,
+			     self.flags,
+			     self.imgweights,
+			     self.ant1ids,
+			     self.ant2ids,
+			     self.time,
+			     self.ref_freqs) as samples:
 	#basic copy back
 	self.clean_host_memory()
 	samples.sync_device2host()
@@ -118,14 +118,14 @@ class class_test_uv_data_wrapper(unittest.TestCase):
       #construct uv_data thereby transferring the original samples host to device:
       self.gen_samples_host()
       self.deep_copy_host()
-      with uv_data(self.uvw,
-		   self.vis,
-		   self.flags,
-		   self.imgweights,
-		   self.ant1ids,
-		   self.ant2ids,
-		   self.time,
-		   self.ref_freqs) as samples:
+      with irregular_uv_data(self.uvw,
+			     self.vis,
+			     self.flags,
+			     self.imgweights,
+			     self.ant1ids,
+			     self.ant2ids,
+			     self.time,
+			     self.ref_freqs) as samples:
 	#clean host and regenerate samples host side
 	self.clean_host_memory()
 	self.gen_samples_host()
@@ -139,39 +139,39 @@ class class_test_uv_data_wrapper(unittest.TestCase):
       self.gen_samples_host()
       #just test one for now to make sure
       self.assertRaises(RuntimeError, 
-			lambda :uv_data(np.zeros([self.nrows*3,3], dtype=np.float32)[0:self.nrows*3:3,:],
+			lambda :irregular_uv_data(np.zeros([self.nrows*3,3], dtype=np.float32)[0:self.nrows*3:3,:],
 					self.vis,self.flags,self.imgweights,
 				self.ant1ids,self.ant2ids,self.time,self.ref_freqs))
       #just test one array with fortran ordering
       self.assertRaises(RuntimeError, 
-			lambda :uv_data(np.zeros([3,self.nrows], dtype=np.float32).T,
+			lambda :irregular_uv_data(np.zeros([3,self.nrows], dtype=np.float32).T,
 					self.vis,self.flags,self.imgweights,
 				self.ant1ids,self.ant2ids,self.time,self.ref_freqs))
       #check correct types:
       foobar = np.zeros([100],dtype=object)
       self.assertRaises(RuntimeError, 
-			lambda :uv_data(foobar,self.vis,self.flags,self.imgweights,
+			lambda :irregular_uv_data(foobar,self.vis,self.flags,self.imgweights,
 				self.ant1ids,self.ant2ids,self.time,self.ref_freqs))
       self.assertRaises(RuntimeError, 
-			lambda :uv_data(self.uvw,foobar,self.flags,self.imgweights,
+			lambda :irregular_uv_data(self.uvw,foobar,self.flags,self.imgweights,
 				self.ant1ids,self.ant2ids,self.time,self.ref_freqs))
       self.assertRaises(RuntimeError, 
-			lambda :uv_data(self.uvw,self.vis,foobar,self.imgweights,
+			lambda :irregular_uv_data(self.uvw,self.vis,foobar,self.imgweights,
 				self.ant1ids,self.ant2ids,self.time,self.ref_freqs))
       self.assertRaises(RuntimeError, 
-			lambda :uv_data(self.uvw,self.vis,self.flags,foobar,
+			lambda :irregular_uv_data(self.uvw,self.vis,self.flags,foobar,
 				self.ant1ids,self.ant2ids,self.time,self.ref_freqs))
       self.assertRaises(RuntimeError, 
-			lambda :uv_data(self.uvw,self.vis,self.flags,self.imgweights,
+			lambda :irregular_uv_data(self.uvw,self.vis,self.flags,self.imgweights,
 				foobar,self.ant2ids,self.time,self.ref_freqs))
       self.assertRaises(RuntimeError, 
-			lambda :uv_data(self.uvw,self.vis,self.flags,self.imgweights,
+			lambda :irregular_uv_data(self.uvw,self.vis,self.flags,self.imgweights,
 				self.ant1ids,foobar,self.time,self.ref_freqs))
       self.assertRaises(RuntimeError, 
-			lambda :uv_data(self.uvw,self.vis,self.flags,self.imgweights,
+			lambda :irregular_uv_data(self.uvw,self.vis,self.flags,self.imgweights,
 				self.ant1ids,self.ant2ids,foobar,self.ref_freqs))
       self.assertRaises(RuntimeError, 
-			lambda :uv_data(self.uvw,self.vis,self.flags,self.imgweights,
+			lambda :irregular_uv_data(self.uvw,self.vis,self.flags,self.imgweights,
 				self.ant1ids,self.ant2ids,self.time,foobar))
       #if the shapes passed in was incorrect we should see it in the copied data in the least
       

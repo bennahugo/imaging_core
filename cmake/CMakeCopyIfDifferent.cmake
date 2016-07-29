@@ -16,7 +16,9 @@
    #              to generate rules, pre-pend a user 
    #              supplied tag to prevent duplicate rule errors. 
    SET(AddTargets "")
+   MESSAGE(WARNING ${FILES})
    FOREACH(SRC ${FILES})
+       
        GET_FILENAME_COMPONENT(SRCFILE ${SRC} NAME) 
        # Command to copy the files to ${STEP1}/src, if changed.
        SET(TARGET  "${TAGS}/${SRCFILE}")

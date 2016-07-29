@@ -12,7 +12,7 @@
 #include "gpu_helpers.h"
 
 namespace imaging_core{
-  namespace resamplers{
+  namespace data{
     using namespace std;
     using namespace boost::python;
     
@@ -24,9 +24,8 @@ namespace imaging_core{
     /**
      * Interferometer Measurement Data (uv_data) wrapper 
      * Wrapps host numpy arrays and is responsible for transfers to and from device
-     */
-    
-    class uv_data
+     */    
+    class irregular_uv_data
     {   
     private:
       bool m_resources_aquired;
@@ -62,7 +61,7 @@ namespace imaging_core{
        * for releasing resources in a try...catch...finally block or using a with context manager. In a C++
        * this class is RAII complient and will release device resources upon destruction.
        */
-      uv_data(numeric::array & uvw,
+      irregular_uv_data(numeric::array & uvw,
 	      numeric::array & vis,
 	      numeric::array & flags,
 	      numeric::array & weights,
@@ -164,12 +163,12 @@ namespace imaging_core{
 	checked_acquire_persistant();
 	cudaSafeCall(cudaDeviceSynchronize());
       }
-      uv_data(const uv_data & lvalue) = delete;
-      uv_data(uv_data && rvalue){
+      irregular_uv_data(const irregular_uv_data & lvalue) = delete;
+      irregular_uv_data(irregular_uv_data && rvalue){
 	*this = std::move(rvalue);
       }
-      uv_data& operator=(const uv_data & lvalue) = delete;
-      uv_data& operator=(uv_data && rvalue) {
+      irregular_uv_data& operator=(const irregular_uv_data & lvalue) = delete;
+      irregular_uv_data& operator=(irregular_uv_data && rvalue) {
 	m_resources_aquired = rvalue.m_resources_aquired;
 	rvalue.m_resources_aquired = false;
 	
@@ -202,10 +201,10 @@ namespace imaging_core{
 	cudaSafeCall(cudaDeviceSynchronize());
 	return *this;
       }
-      virtual ~uv_data(){
+      virtual ~irregular_uv_data(){
 	checked_release_persistant();
       }
-      uv_data & checked_acquire_persistant(){ //For use in Python context management try catch finally release mechanism (or with mechanism)
+      irregular_uv_data & checked_acquire_persistant(){ //For use in Python context management try catch finally release mechanism (or with mechanism)
 	if (!m_resources_aquired){
 	  //Acquire resources here:
 	  m_d_uvw = std::move(thrust::device_vector<uvwT>(m_p_uvw, m_p_uvw + m_num_rows));	  
@@ -220,6 +219,7 @@ namespace imaging_core{
 	  m_d_channel_ref_freqs = std::move(thrust::device_vector<float>(m_p_channel_ref_freqs, m_p_channel_ref_freqs + m_num_chan));
 	}
 	m_resources_aquired = true;
+	cudaSafeCall(cudaDeviceSynchronize());
 	return *this;
       }
       void checked_release_persistant(boost::python::object except_type = boost::python::object(),
@@ -267,7 +267,7 @@ namespace imaging_core{
 	cudaSafeCall(cudaDeviceSynchronize());
       }
       /**
-       * Copies host uv data to host (after previous kernels have finished)
+       * Copies host uv data to device (after previous kernels have finished)
        */
       void sync_host2device(){
 	cudaSafeCall(cudaDeviceSynchronize());
